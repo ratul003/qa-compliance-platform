@@ -461,26 +461,67 @@ function ProblemVisuals() {
   );
 }
 
-// ─── Parity matrix: one square per production review ─────────────────────────
+// ─── Parity: the same review through both systems ───────────────────────────
 
-function ParityMatrix() {
-  const COLS = 61, ROWS = 21, CELL = 12, GAP = 2; // 61 × 21 = 1,281
-  const W = COLS * (CELL + GAP) - GAP, H = ROWS * (CELL + GAP) - GAP;
-  const cells = [];
-  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
-    cells.push(<rect key={`${r}-${c}`} x={c * (CELL + GAP)} y={r * (CELL + GAP)} width={CELL} height={CELL} rx="2.5" fill={A} opacity={0.85} />);
-  }
+function ScoreSheet({ name, sub }: { name: string; sub: string }) {
+  // Worked example from the scoring specification: one No in each section.
+  const rows = [
+    { l: "Call scorecard", v: 90, r: "pass" },
+    { l: "Broadband scorecard", v: 85.71, r: "fail" },
+  ];
   return (
-    <div style={panel}>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", justifyContent: "space-between", gap: "10px", marginBottom: "16px" }}>
-        <span style={{ fontSize: "0.92rem", fontWeight: 700, color: INK }}>Every production review, re-scored by the new platform</span>
-        <span style={{ display: "flex", gap: "16px", fontSize: "0.74rem", color: MUT }}>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}><span style={{ width: "10px", height: "10px", borderRadius: "2.5px", background: A }} />Same score and result: 1,281</span>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}><span style={{ width: "10px", height: "10px", borderRadius: "2.5px", background: BAD }} />Mismatch: 0</span>
+    <div style={{ flex: 1, minWidth: "230px", background: "var(--surface-elevated)", border: "1px solid var(--border)", borderRadius: "14px", padding: "18px 20px" }}>
+      <div style={{ fontSize: "0.92rem", fontWeight: 700, color: INK }}>{name}</div>
+      <div style={{ fontSize: "0.7rem", color: SUB, marginBottom: "16px" }}>{sub}</div>
+      {rows.map((x) => (
+        <div key={x.l} style={{ marginBottom: "12px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem", color: MUT, marginBottom: "5px" }}>
+            <span>{x.l}</span>
+            <span style={{ color: INK, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>{x.v.toFixed(2)}% <span style={{ color: x.r === "pass" ? GOOD : BAD, fontWeight: 700 }}>{x.r}</span></span>
+          </div>
+          <div style={{ height: "6px", borderRadius: "3px", background: "var(--border-subtle)" }}>
+            <div style={{ width: `${x.v}%`, height: "100%", borderRadius: "3px", background: A }} />
+          </div>
+        </div>
+      ))}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "16px", paddingTop: "14px", borderTop: "1px solid var(--border-subtle)" }}>
+        <span style={{ fontSize: "0.72rem", color: SUB, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700 }}>Overall</span>
+        <span style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <span style={{ fontSize: "1.5rem", fontWeight: 900, color: INK, letterSpacing: "-0.03em", fontVariantNumeric: "tabular-nums" }}>87.86%</span>
+          <Chip tone={BAD}>FAIL</Chip>
         </span>
       </div>
-      <svg viewBox={`0 0 ${W} ${H}`} width="100%" role="img" aria-label="A grid of 1,281 squares, one per review. All 1,281 match. None mismatch.">{cells}</svg>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "16px" }}>
+    </div>
+  );
+}
+
+function ParityMatrix() {
+  const R = 54, C = 2 * Math.PI * R;
+  return (
+    <div style={panel}>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: "18px" }}>
+        <ScoreSheet name="Old system" sub="Review tool inside the core system" />
+
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px", padding: "0 6px" }}>
+          <svg width="150" height="150" viewBox="0 0 150 150" role="img" aria-label="1,281 of 1,281 production reviews re-scored to the same score and result. 0 mismatches.">
+            <circle cx="75" cy="75" r={R} fill="none" stroke="var(--border)" strokeWidth="10" />
+            <circle cx="75" cy="75" r={R} fill="none" stroke={A} strokeWidth="10" strokeDasharray={`${C} ${C}`} transform="rotate(-90 75 75)" />
+            <text x="75" y="70" textAnchor="middle" fontSize="23" fontWeight="900" fill="#e8e8f0" letterSpacing="-0.5">1,281</text>
+            <text x="75" y="89" textAnchor="middle" fontSize="10.5" fill="#8888a8">of 1,281 identical</text>
+          </svg>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span style={{ fontSize: "1.3rem", fontWeight: 900, color: A, lineHeight: 1 }}>=</span>
+            <Chip tone={GOOD}>0 mismatches</Chip>
+          </div>
+        </div>
+
+        <ScoreSheet name="New platform" sub="Same review, re-scored independently" />
+      </div>
+
+      <p style={{ ...caption, textAlign: "center", margin: "18px auto 0", maxWidth: "620px" }}>
+        One review from the scoring specification, shown through both systems. Every one of the 1,281 production reviews came out like this: same sections, same score, same result.
+      </p>
+      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px", marginTop: "16px" }}>
         <Chip tone={A}>Points pooled, not averaged</Chip>
         <Chip tone={A}>A fail never changes the score</Chip>
         <Chip tone={A}>Rounding matched to the original</Chip>
@@ -770,6 +811,65 @@ function ToolFlow() {
   );
 }
 
+// ─── Walkthrough video with chapters ─────────────────────────────────────────
+
+const TOUR: { g: string; items: [string, number][] }[] = [
+  { g: "Getting started", items: [["Welcome", 0]] },
+  { g: "Finding calls", items: [["Home", 32], ["Score calls", 50], ["Short and non-sales calls", 66], ["Skipping a call", 79]] },
+  { g: "Scoring", items: [["Scoring a call", 89], ["Notes, tags and next steps", 107]] },
+  { g: "After a review", items: [["Reviews", 124], ["A review and its export", 136], ["Challenges", 147], ["Follow-ups", 161]] },
+  { g: "Insights", items: [["What changed", 178], ["Trends and most missed", 193], ["Heat map", 206], ["Habits and coaching gaps", 217], ["Agents and reviewers", 226]] },
+  { g: "Reports", items: [["Manager report", 238], ["Agent pages and ranking", 256]] },
+  { g: "Settings and coaching", items: [["QA team", 274], ["Targets, weighting and split", 286], ["Calibration", 306], ["Scorecards", 321], ["Logins and audit", 342]] },
+  { g: "Help", items: [["Feedback and the pay feed", 356]] },
+];
+const TOUR_FLAT = TOUR.flatMap((x) => x.items);
+const mmss = (t: number) => `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
+
+function VideoTour() {
+  const ref = React.useRef<HTMLVideoElement>(null);
+  const [now, setNow] = React.useState(0);
+  const active = TOUR_FLAT.reduce((acc, [, t], i) => (now >= t ? i : acc), 0);
+  const go = (t: number) => { const v = ref.current; if (!v) return; v.currentTime = t; v.play().catch(() => {}); };
+  let n = 0;
+  return (
+    <div style={{ ...panel, padding: 0, overflow: "hidden" }}>
+      <div style={{ display: "flex", flexWrap: "wrap" }}>
+        <div style={{ flex: "3 1 520px", minWidth: 0, background: "#000", display: "flex", alignItems: "center" }}>
+          <video ref={ref} controls preload="metadata" playsInline poster="/walkthrough-poster.jpg"
+            onTimeUpdate={(e) => setNow(e.currentTarget.currentTime)}
+            style={{ display: "block", width: "100%", aspectRatio: "1280 / 800" }}
+            aria-label="Six-minute narrated walkthrough of the QA Compliance Platform">
+            <source src="/walkthrough.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <div style={{ flex: "1 1 260px", maxHeight: "470px", overflowY: "auto", padding: "14px 14px 16px", borderLeft: "1px solid var(--border-subtle)" }}>
+          {TOUR.map((grp) => (
+            <div key={grp.g} style={{ marginBottom: "10px" }}>
+              <div style={{ ...eyebrow, padding: "6px 8px 4px" }}>{grp.g}</div>
+              {grp.items.map(([label, t]) => {
+                const i = n++;
+                const on = i === active;
+                return (
+                  <button key={label} onClick={() => go(t)} aria-current={on ? "true" : undefined} style={{
+                    display: "flex", alignItems: "center", gap: "10px", width: "100%", textAlign: "left", cursor: "pointer",
+                    padding: "6px 8px", borderRadius: "8px", border: `1px solid ${on ? "rgba(132,204,22,0.35)" : "transparent"}`,
+                    background: on ? "rgba(132,204,22,0.08)" : "transparent",
+                  }}>
+                    <span style={{ width: "20px", height: "20px", borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem", fontWeight: 800, color: on ? "#0f1a02" : SUB, background: on ? A : "var(--surface-elevated)", border: "1px solid var(--border)" }}>{i + 1}</span>
+                    <span style={{ flex: 1, fontSize: "0.8rem", color: on ? INK : MUT, fontWeight: on ? 600 : 400 }}>{label}</span>
+                    <span style={{ fontSize: "0.7rem", color: SUB, fontVariantNumeric: "tabular-nums" }}>{mmss(t)}</span>
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function BigStat({ v, l }: { v: string; l: string }) {
   return (
     <div style={{ ...panel, textAlign: "center", padding: "26px 18px" }}>
@@ -852,6 +952,7 @@ function ChapterTransition({ from, to }: { from: string; to: string }) {
 }
 
 const NAV_SECTIONS = [
+  { id: "walkthrough", label: "Walkthrough" },
   { id: "problem", label: "Problem" },
   { id: "parity", label: "Parity" },
   { id: "architecture", label: "Architecture" },
@@ -864,7 +965,7 @@ const NAV_SECTIONS = [
 ];
 
 function SectionNav() {
-  const [active, setActive] = React.useState<string>("problem");
+  const [active, setActive] = React.useState<string>("walkthrough");
   React.useEffect(() => {
     const obs = new IntersectionObserver(
       (entries) => {
@@ -995,7 +1096,10 @@ export default function Home() {
             </div>
 
             <div style={{ marginTop: "26px", display: "flex", flexWrap: "wrap", gap: "12px", alignItems: "center" }}>
-              <a href="#scoring" style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "linear-gradient(135deg, #65a30d, #a3e635)", color: "#0f1a02", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", borderRadius: "9px", padding: "10px 18px", boxShadow: "0 0 18px rgba(132,204,22,0.35)" }}>
+              <a href="#walkthrough" style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "linear-gradient(135deg, #65a30d, #a3e635)", color: "#0f1a02", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", borderRadius: "9px", padding: "10px 18px", boxShadow: "0 0 18px rgba(132,204,22,0.35)" }}>
+                ▶ Watch the 6-minute tour
+              </a>
+              <a href="#scoring" style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "transparent", color: "var(--foreground-muted)", fontSize: "0.85rem", fontWeight: 600, textDecoration: "none", border: "1px solid var(--border)", borderRadius: "9px", padding: "10px 18px" }}>
                 Score a call
               </a>
               <a href="mailto:wahidtratul@gmail.com" style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "transparent", color: "var(--foreground-muted)", fontSize: "0.85rem", fontWeight: 600, textDecoration: "none", border: "1px solid var(--border)", borderRadius: "9px", padding: "10px 18px" }}>
@@ -1012,6 +1116,16 @@ export default function Home() {
         <section style={{ padding: "0 0 40px" }}>
           <div style={wrap}>
             <StoryArc />
+          </div>
+        </section>
+
+        {/* ── Walkthrough ───────────────────────────────────────────────── */}
+        <section id="walkthrough" style={{ padding: "20px 0 70px" }}>
+          <div style={wrap}>
+            <Label>Watch it run</Label>
+            <Heading className="gradient-heading">The whole product in six minutes</Heading>
+            <Body>The narrated guide that ships inside the tool, recorded on demo data. Pick a chapter to jump to it.</Body>
+            <div style={gap}><VideoTour /></div>
           </div>
         </section>
 
@@ -1036,7 +1150,7 @@ export default function Home() {
             <div><ChapterBadge n={2} color="#f59e0b" /></div>
             <Label>Approach</Label>
             <Heading className="gradient-heading">Copy the old system exactly, then prove it</Heading>
-            <Body>A stricter rule is only credible if the baseline is identical first. Each square is one review.</Body>
+            <Body>A stricter rule is only credible if the baseline is identical first.</Body>
             <div style={gap}><ParityMatrix /></div>
           </div>
         </section>
@@ -1207,7 +1321,7 @@ export default function Home() {
           </div>
 
           <div style={{ fontSize: "0.7rem", color: "var(--foreground-subtle)", lineHeight: 1.6, maxWidth: "640px" }}>
-            Written case study: all architecture, processes and methods described from first-hand work at Just Move In. The scorecard, analyst home, heat map and most-missed chart on this page are synthetic. No customer data, agent records, supplier names or confidential figures are reproduced.
+            Written case study: all architecture, processes and methods described from first-hand work at Just Move In. The walkthrough video shows the product running on demo data, with scorecard names as they appear in the tool. The scorecard, analyst home, heat map and most-missed chart on this page are synthetic. No customer data or real agent records are reproduced.
           </div>
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
