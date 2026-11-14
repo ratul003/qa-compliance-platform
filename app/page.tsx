@@ -330,35 +330,6 @@ function ArchitectureDiagram() {
   );
 }
 
-// ─── Timeline ────────────────────────────────────────────────────────────────
-
-const TIMELINE = [
-  { d: "15 Oct", t: "Problem scoped", b: "The quality lead describes a tool that works but cannot be changed without an engineering ticket." },
-  { d: "26 Oct", t: "Decision", b: "Replicate the whole compliance section first. A narrow, read-only feed every 15 minutes." },
-  { d: "28 Oct", t: "Copy live, parity proven", b: "1,281 of 1,281 production reviews re-score to the same score and result." },
-  { d: "5 Nov", t: "Rules and impact", b: "Critical-fail rulesets built behind a switch. Three months of history re-scored to size the effect." },
-  { d: "6 Nov", t: "The analyst's day", b: "Home, prioritised queue, keyboard scoring, insights and reports. Demoed to leadership." },
-  { d: "9 Nov", t: "Second track and access", b: "A second sales team as its own track, role-based viewing, audit trail, hardening." },
-  { d: "13 Nov", t: "Reviewer feedback", b: "Critical misses score by section, call claiming, analyst view. In parallel running." },
-];
-
-function Timeline() {
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: "10px" }}>
-      {TIMELINE.map((x, i) => (
-        <div key={x.d} className="card-hover" style={{ background: "var(--surface)", border: "1px solid var(--border-subtle)", borderRadius: "12px", padding: "16px 18px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-            <span style={{ width: "20px", height: "20px", borderRadius: "50%", background: "var(--accent-muted)", border: "1px solid var(--accent-border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.58rem", fontWeight: 800, color: A }}>{i + 1}</span>
-            <span style={{ fontSize: "0.66rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: A }}>{x.d} 2026</span>
-          </div>
-          <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--foreground)", marginBottom: "5px" }}>{x.t}</div>
-          <p style={{ fontSize: "0.78rem", color: "var(--foreground-muted)", lineHeight: 1.6, margin: 0 }}>{x.b}</p>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 // ─── Heat map (synthetic) ────────────────────────────────────────────────────
 
 const HM_CRITERIA = ["Call introduced correctly", "Recording notice", "Meter type advised", "Tariff name in full", "Review requested", "Email spelt back"];
@@ -409,32 +380,401 @@ function HeatMap() {
   );
 }
 
-// ─── Small shared cards ──────────────────────────────────────────────────────
+// ─── Visual building blocks ──────────────────────────────────────────────────
 
-function InfoCard({ title, children, tone }: { title: string; children: ReactNode; tone?: string }) {
+const INK = "var(--foreground)";
+const MUT = "var(--foreground-muted)";
+const SUB = "var(--foreground-subtle)";
+const GOOD = "#34d399";
+const WARN = "#fbbf24";
+const BAD = "#f87171";
+
+const panel: React.CSSProperties = { background: "var(--surface)", border: "1px solid var(--border-subtle)", borderRadius: "16px", padding: "22px" };
+const eyebrow: React.CSSProperties = { fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.13em", color: SUB };
+const caption: React.CSSProperties = { fontSize: "0.82rem", color: MUT, lineHeight: 1.5, margin: 0 };
+
+function Chip({ tone, children }: { tone: string; children: ReactNode }) {
   return (
-    <div className="card-hover" style={{ background: "var(--surface)", border: "1px solid var(--border-subtle)", borderRadius: "14px", padding: "20px 22px" }}>
-      <h3 style={{ fontSize: "0.94rem", fontWeight: 700, color: tone ?? "var(--foreground)", marginBottom: "7px" }}>{title}</h3>
-      <p style={{ fontSize: "0.85rem", color: "var(--foreground-muted)", lineHeight: 1.7, margin: 0 }}>{children}</p>
+    <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "0.7rem", fontWeight: 700, color: tone, border: `1px solid ${tone}55`, background: `${tone}14`, borderRadius: "6px", padding: "3px 9px", whiteSpace: "nowrap" }}>
+      {children}
+    </span>
+  );
+}
+
+function Tick({ ok }: { ok: boolean }) {
+  const c = ok ? GOOD : BAD;
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" style={{ flexShrink: 0 }}>
+      <circle cx="9" cy="9" r="8" fill={`${c}1f`} stroke={`${c}66`} />
+      {ok
+        ? <path d="M5.2 9.3l2.5 2.5 5-5.4" stroke={c} strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        : <path d="M6 6l6 6M12 6l-6 6" stroke={c} strokeWidth="1.8" strokeLinecap="round" />}
+    </svg>
+  );
+}
+
+// ─── Problem, drawn ──────────────────────────────────────────────────────────
+
+function ProblemVisuals() {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "14px" }}>
+      {/* 1. The queue */}
+      <div style={panel}>
+        <div style={eyebrow}>Changing a rule</div>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", margin: "22px 0 20px" }}>
+          <div style={{ fontSize: "0.72rem", fontWeight: 700, color: INK, border: "1px solid var(--border)", borderRadius: "8px", padding: "9px 10px", textAlign: "center", lineHeight: 1.25 }}>Quality<br />lead</div>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }} aria-label="A queue of five waiting tickets">
+            {[1, 0.8, 0.62, 0.46, 0.32].map((o) => (
+              <div key={o} style={{ height: "9px", borderRadius: "3px", background: `rgba(248,113,113,${o * 0.55})`, border: "1px solid rgba(248,113,113,0.35)" }} />
+            ))}
+          </div>
+          <span style={{ color: SUB }}>→</span>
+          <div style={{ fontSize: "0.72rem", fontWeight: 700, color: INK, border: "1px solid var(--border)", borderRadius: "8px", padding: "9px 10px", textAlign: "center", lineHeight: 1.25 }}>Engineering<br />release</div>
+        </div>
+        <p style={caption}>Every question, weight or pass rule waited in an engineering queue.</p>
+      </div>
+
+      {/* 2. The score that passed */}
+      <div style={panel}>
+        <div style={eyebrow}>A critical miss</div>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px", margin: "14px 0 14px" }}>
+          <div className="gradient-number" style={{ fontSize: "3.4rem", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1 }}>90%</div>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "7px" }}>
+            <Chip tone={GOOD}>PASS</Chip>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "0.74rem", color: MUT }}><Tick ok={false} />Recording notice</span>
+          </div>
+        </div>
+        <p style={caption}>The most serious miss on a call cost 10 points of 100, and the call still passed.</p>
+      </div>
+
+      {/* 3. Coverage */}
+      <div style={panel}>
+        <div style={eyebrow}>What got reviewed</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "9px", margin: "16px 0 14px" }}>
+          {[{ l: "Completed sales calls", ok: true }, { l: "Short calls", ok: false }, { l: "Non-sales calls", ok: false }].map((r) => (
+            <div key={r.l} style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "0.86rem", color: r.ok ? INK : MUT }}><Tick ok={r.ok} />{r.l}</div>
+          ))}
+        </div>
+        <p style={caption}>All by hand, at 7 to 8 reviews per analyst per day.</p>
+      </div>
     </div>
   );
 }
 
-function StatTile({ v, l }: { v: string; l: string }) {
+// ─── Parity matrix: one square per production review ─────────────────────────
+
+function ParityMatrix() {
+  const COLS = 61, ROWS = 21, CELL = 12, GAP = 2; // 61 × 21 = 1,281
+  const W = COLS * (CELL + GAP) - GAP, H = ROWS * (CELL + GAP) - GAP;
+  const cells = [];
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+    cells.push(<rect key={`${r}-${c}`} x={c * (CELL + GAP)} y={r * (CELL + GAP)} width={CELL} height={CELL} rx="2.5" fill={A} opacity={0.85} />);
+  }
   return (
-    <div style={{ background: "var(--surface)", border: "1px solid var(--border-subtle)", borderRadius: "14px", padding: "20px 22px" }}>
-      <div className="gradient-number" style={{ fontSize: "1.7rem", fontWeight: 900, letterSpacing: "-0.03em", lineHeight: 1.1 }}>{v}</div>
-      <div style={{ fontSize: "0.76rem", color: "var(--foreground-muted)", marginTop: "6px", lineHeight: 1.5 }}>{l}</div>
+    <div style={panel}>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", justifyContent: "space-between", gap: "10px", marginBottom: "16px" }}>
+        <span style={{ fontSize: "0.92rem", fontWeight: 700, color: INK }}>Every production review, re-scored by the new platform</span>
+        <span style={{ display: "flex", gap: "16px", fontSize: "0.74rem", color: MUT }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}><span style={{ width: "10px", height: "10px", borderRadius: "2.5px", background: A }} />Same score and result: 1,281</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}><span style={{ width: "10px", height: "10px", borderRadius: "2.5px", background: BAD }} />Mismatch: 0</span>
+        </span>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" role="img" aria-label="A grid of 1,281 squares, one per review. All 1,281 match. None mismatch.">{cells}</svg>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "16px" }}>
+        <Chip tone={A}>Points pooled, not averaged</Chip>
+        <Chip tone={A}>A fail never changes the score</Chip>
+        <Chip tone={A}>Rounding matched to the original</Chip>
+        <Chip tone={WARN}>Old quirks copied, then logged for decision</Chip>
+      </div>
     </div>
   );
 }
 
-function StateRow({ state, children }: { state: "live" | "open"; children: ReactNode }) {
-  const c = state === "live" ? "#34d399" : "#fbbf24";
+// ─── The loaded call under three rulesets ────────────────────────────────────
+
+function RulesetBars() {
+  const rows = [
+    { l: "Original rules", v: 95, pass: true, n: "The miss costs 10 points" },
+    { l: "Notice fails the call", v: 0, pass: false, n: "First proposal" },
+    { l: "Critical by section", v: 50, pass: false, n: "Adopted after review" },
+  ];
   return (
-    <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", padding: "11px 0", borderTop: "1px solid var(--border-subtle)" }}>
-      <span style={{ fontSize: "0.56rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: c, border: `1px solid ${c}55`, background: `${c}12`, borderRadius: "5px", padding: "3px 7px", flexShrink: 0, marginTop: "2px", width: "44px", textAlign: "center" }}>{state}</span>
-      <p style={{ fontSize: "0.85rem", color: "var(--foreground-muted)", lineHeight: 1.65, margin: 0 }}>{children}</p>
+    <div style={panel}>
+      <div style={{ fontSize: "0.92rem", fontWeight: 700, color: INK, marginBottom: "4px" }}>The same call, scored three ways</div>
+      <p style={{ ...caption, marginBottom: "18px" }}>Recording notice missed, everything else correct.</p>
+      <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+        {rows.map((r) => (
+          <div key={r.l} title={`${r.l}: ${r.v}%, ${r.pass ? "pass" : "fail"}`} style={{ display: "grid", gridTemplateColumns: "minmax(120px, 170px) 1fr 104px", alignItems: "center", gap: "14px" }}>
+            <div>
+              <div style={{ fontSize: "0.84rem", fontWeight: 600, color: INK }}>{r.l}</div>
+              <div style={{ fontSize: "0.7rem", color: SUB }}>{r.n}</div>
+            </div>
+            <div style={{ height: "14px", borderLeft: "1px solid var(--border)", position: "relative" }}>
+              {r.v > 0 && <div style={{ width: `${r.v}%`, height: "100%", background: A, borderRadius: "0 4px 4px 0" }} />}
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "flex-end" }}>
+              <span style={{ fontSize: "0.95rem", fontWeight: 800, color: INK, fontVariantNumeric: "tabular-nums" }}>{r.v}%</span>
+              <Chip tone={r.pass ? GOOD : BAD}>{r.pass ? "PASS" : "FAIL"}</Chip>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "20px" }}>
+        <Chip tone={A}>Sized on 3 months of real history first</Chip>
+        <Chip tone={A}>Switches on the 1st of a month</Chip>
+        <Chip tone={A}>A setting, not a deploy</Chip>
+      </div>
+    </div>
+  );
+}
+
+// ─── The analyst's home, as a product mock (synthetic) ───────────────────────
+
+function Ring({ v, of, label }: { v: number; of: number; label: string }) {
+  const R = 26, C = 2 * Math.PI * R;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "12px" }} title={`${label}: ${v} of ${of}`}>
+      <svg width="64" height="64" viewBox="0 0 64 64" role="img" aria-label={`${label}: ${v} of ${of}`}>
+        <circle cx="32" cy="32" r={R} fill="none" stroke="var(--border)" strokeWidth="6" />
+        <circle cx="32" cy="32" r={R} fill="none" stroke={A} strokeWidth="6" strokeLinecap="round" strokeDasharray={`${(v / of) * C} ${C}`} transform="rotate(-90 32 32)" />
+        <text x="32" y="37" textAnchor="middle" fontSize="15" fontWeight="800" fill="#e8e8f0">{v}</text>
+      </svg>
+      <div>
+        <div style={{ fontSize: "0.8rem", fontWeight: 700, color: INK }}>{label}</div>
+        <div style={{ fontSize: "0.72rem", color: SUB }}>of {of}</div>
+      </div>
+    </div>
+  );
+}
+
+function Key({ k, l }: { k: string; l: string }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
+      <span style={{ width: "40px", height: "40px", borderRadius: "9px", border: "1px solid var(--border)", borderBottomWidth: "3px", background: "var(--surface-elevated)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.95rem", fontWeight: 800, color: INK }}>{k}</span>
+      <span style={{ fontSize: "0.66rem", color: SUB }}>{l}</span>
+    </div>
+  );
+}
+
+function HomeMock() {
+  const queue = [
+    { a: "Agent C", n: 1, len: "12 min", first: true },
+    { a: "Agent F", n: 2, len: "4 min", first: false },
+    { a: "Agent A", n: 2, len: "11 min", first: false },
+    { a: "Agent H", n: 3, len: "5 min", first: false },
+  ];
+  return (
+    <div style={{ ...panel, padding: 0, overflow: "hidden" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "11px 16px", borderBottom: "1px solid var(--border-subtle)", background: "rgba(255,255,255,0.02)" }}>
+        {[0, 1, 2].map((i) => <span key={i} style={{ width: "8px", height: "8px", borderRadius: "50%", background: "rgba(255,255,255,0.14)" }} />)}
+        <span style={{ fontSize: "0.72rem", color: SUB, marginLeft: "6px" }}>Analyst home</span>
+        <span style={{ marginLeft: "auto", fontSize: "0.66rem", color: WARN }}>Synthetic data, real layout</span>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+        {/* Left: progress and queue */}
+        <div style={{ padding: "20px 22px", borderRight: "1px solid var(--border-subtle)" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "26px", marginBottom: "20px" }}>
+            <Ring v={3} of={7} label="Today" />
+            <Ring v={22} of={36} label="This week" />
+          </div>
+          <div style={{ ...eyebrow, marginBottom: "10px" }}>Next calls to score</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
+            {queue.map((q) => (
+              <div key={q.a} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "10px 12px", borderRadius: "10px", border: `1px solid ${q.first ? "rgba(132,204,22,0.4)" : "var(--border-subtle)"}`, background: q.first ? "rgba(132,204,22,0.07)" : "transparent" }}>
+                <span style={{ fontSize: "0.84rem", fontWeight: 600, color: INK, width: "66px" }}>{q.a}</span>
+                <span style={{ display: "flex", gap: "3px" }} aria-label={`${q.n} of 5 reviews this month`}>
+                  {[1, 2, 3, 4, 5].map((i) => <span key={i} style={{ width: "13px", height: "6px", borderRadius: "3px", background: i <= q.n ? A : "var(--border)" }} />)}
+                </span>
+                <span style={{ fontSize: "0.72rem", color: SUB }}>{q.n} of 5</span>
+                <span style={{ fontSize: "0.72rem", color: SUB, marginLeft: "auto" }}>{q.len}</span>
+                {q.first && <Chip tone={A}>first in line</Chip>}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: keys, calendar, rules */}
+        <div style={{ padding: "20px 22px", background: "rgba(12,12,20,0.5)" }}>
+          <div style={{ ...eyebrow, marginBottom: "12px" }}>Scoring from the keyboard</div>
+          <div style={{ display: "flex", gap: "10px", marginBottom: "22px" }}>
+            <Key k="Y" l="Yes" /><Key k="N" l="No" /><Key k="A" l="N/A" />
+            <span style={{ width: "1px", background: "var(--border-subtle)", margin: "0 4px" }} />
+            <Key k="J" l="Down" /><Key k="K" l="Up" />
+          </div>
+
+          <div style={{ ...eyebrow, marginBottom: "10px" }}>The month after a review</div>
+          <div style={{ display: "flex", gap: "4px", marginBottom: "8px" }} role="img" aria-label="Days 1 to 9 of the next month. Challenges close on the 5th. Scores lock on the 9th.">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((d) => {
+              const tone = d === 5 ? WARN : d === 9 ? BAD : null;
+              return (
+                <span key={d} style={{ flex: 1, height: "34px", borderRadius: "7px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.78rem", fontWeight: 700, color: tone ?? SUB, border: `1px solid ${tone ? tone + "77" : "var(--border-subtle)"}`, background: tone ? `${tone}18` : d < 5 ? "rgba(132,204,22,0.06)" : "transparent" }}>{d}</span>
+              );
+            })}
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "20px" }}>
+            <Chip tone={WARN}>5th: challenges close</Chip>
+            <Chip tone={BAD}>9th: scores lock</Chip>
+          </div>
+
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+            <Chip tone={A}>Call claimed for 45 min</Chip>
+            <Chip tone={A}>Skip needs a reason</Chip>
+            <Chip tone={A}>Blind calibration</Chip>
+            <Chip tone={A}>Autosave</Chip>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Thirty days: milestones and deployments per day ─────────────────────────
+
+const DEPLOYS: Record<number, { n: number; note: string }> = {
+  13: { n: 3, note: "Copy live, parity proven" },
+  21: { n: 3, note: "Rulesets built" },
+  22: { n: 14, note: "Analyst's day, demo" },
+  25: { n: 10, note: "Second track, access" },
+  29: { n: 4, note: "Reviewer feedback" },
+};
+const MARKS: Record<number, string> = { 0: "Scoped", 11: "Decision: copy it" };
+
+function DeployChart() {
+  const [hover, setHover] = React.useState<number | null>(null);
+  const DAYS = 30, W = 1040, H = 250, L = 34, B = 34, T = 54, MAX = 14;
+  const step = (W - L - 10) / DAYS, bw = Math.min(step - 2, 24);
+  const y = (n: number) => T + (H - T - B) * (1 - n / MAX);
+  const label = (i: number) => { const d = new Date(Date.UTC(2026, 9, 15 + i)); return `${d.getUTCDate()} ${d.getUTCMonth() === 9 ? "Oct" : "Nov"}`; };
+  return (
+    <div style={panel}>
+      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: "8px", marginBottom: "6px" }}>
+        <span style={{ fontSize: "0.92rem", fontWeight: 700, color: INK }}>Deployments per day, from first scope to parallel running</span>
+        <span style={{ fontSize: "0.76rem", color: MUT, minHeight: "18px" }}>{hover !== null ? `${label(hover)}: ${DEPLOYS[hover]?.n ?? 0} deployments${DEPLOYS[hover] ? ` · ${DEPLOYS[hover].note}` : MARKS[hover] ? ` · ${MARKS[hover]}` : ""}` : "34 deployments in total"}</span>
+      </div>
+      <div style={{ overflowX: "auto" }}>
+        <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", minWidth: "720px" }} role="img" aria-label="Bar chart of deployments per day from 15 October to 13 November 2026. 3 on 28 October, 3 on 5 November, 14 on 6 November, 10 on 9 November, 4 on 13 November.">
+          {[0, 7, 14].map((g) => (
+            <g key={g}>
+              <line x1={L} x2={W - 10} y1={y(g)} y2={y(g)} stroke="var(--border-subtle)" />
+              <text x={L - 8} y={y(g) + 4} textAnchor="end" fontSize="11" fill="#4a4a68">{g}</text>
+            </g>
+          ))}
+          {Array.from({ length: DAYS }, (_, i) => {
+            const d = DEPLOYS[i], x = L + i * step + (step - bw) / 2, cx = x + bw / 2;
+            return (
+              <g key={i} onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}>
+                <rect x={L + i * step} y={T - 40} width={step} height={H - T - B + 40} fill="transparent" />
+                {d && <path d={`M${x},${y(0)} V${y(d.n) + 4} Q${x},${y(d.n)} ${x + 4},${y(d.n)} H${x + bw - 4} Q${x + bw},${y(d.n)} ${x + bw},${y(d.n) + 4} V${y(0)} Z`} fill={A} opacity={hover === null || hover === i ? 1 : 0.45} />}
+                {d && <text x={cx} y={y(d.n) - 8} textAnchor="middle" fontSize="13" fontWeight="800" fill="#e8e8f0">{d.n}</text>}
+                {d && <text x={cx} y={y(d.n) - 24} textAnchor={i > 26 || i === 21 ? "end" : "middle"} fontSize="11" fill="#8888a8">{d.note}</text>}
+                {MARKS[i] && (
+                  <g>
+                    <circle cx={cx} cy={y(0)} r="5" fill="#0a0a0f" stroke={WARN} strokeWidth="2" />
+                    <text x={cx} y={y(0) - 14} textAnchor={i === 0 ? "start" : "end"} fontSize="11" fill="#8888a8">{MARKS[i]}</text>
+                  </g>
+                )}
+                {((d && i !== 21) || MARKS[i]) && <text x={cx} y={H - 12} textAnchor="middle" fontSize="10.5" fill="#4a4a68">{label(i)}</text>}
+              </g>
+            );
+          })}
+          <line x1={L} x2={W - 10} y1={y(0)} y2={y(0)} stroke="var(--border)" />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+// ─── Most-missed criteria (synthetic, from the same grid as the heat map) ────
+
+function MissedBars() {
+  const rows = HM_CRITERIA.map((c, ci) => ({ c, v: Math.round(HM_AGENTS.reduce((s, _, ai) => s + hmValue(ai, ci), 0) / HM_AGENTS.length) })).sort((a, b) => b.v - a.v);
+  const max = rows[0].v;
+  return (
+    <div style={panel}>
+      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: "8px", marginBottom: "16px" }}>
+        <span style={{ fontSize: "0.92rem", fontWeight: 700, color: INK }}>Most-missed criteria</span>
+        <span style={{ fontSize: "0.66rem", color: WARN }}>Synthetic data, real layout</span>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: "11px" }}>
+        {rows.map((r) => (
+          <div key={r.c} title={`${r.c}: missed on ${r.v}% of reviewed calls`} style={{ display: "grid", gridTemplateColumns: "minmax(110px, 170px) 1fr 40px", alignItems: "center", gap: "12px" }}>
+            <span style={{ fontSize: "0.8rem", color: MUT }}>{r.c}</span>
+            <span style={{ height: "10px", borderLeft: "1px solid var(--border)" }}>
+              <span style={{ display: "block", width: `${(r.v / max) * 100}%`, height: "100%", background: BAD, opacity: 0.75, borderRadius: "0 4px 4px 0" }} />
+            </span>
+            <span style={{ fontSize: "0.8rem", fontWeight: 700, color: INK, textAlign: "right", fontVariantNumeric: "tabular-nums" }}>{r.v}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Controls and limits, as a status board ──────────────────────────────────
+
+function StatusBoard() {
+  const live = ["No customer personal data stored", "Notes reject emails, phones and postcodes", "Agents see only their own scores", "Audit trail kept for 400 days", "Sessions revoked in about 30 seconds"];
+  const open = ["Not cut over: both systems still run", "Audit log not locked to the database owner", "Backups not yet verified", "Model scoring waits for 95% agreement", "No time-saved figure yet"];
+  const col = (title: string, tone: string, tag: string, items: string[]) => (
+    <div style={panel}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
+        <span style={{ fontSize: "0.95rem", fontWeight: 700, color: INK }}>{title}</span>
+        <Chip tone={tone}>{items.length} {tag}</Chip>
+      </div>
+      {items.map((t) => (
+        <div key={t} style={{ display: "flex", alignItems: "center", gap: "11px", padding: "10px 0", borderTop: "1px solid var(--border-subtle)" }}>
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" style={{ flexShrink: 0 }}>
+            <circle cx="9" cy="9" r="8" fill={`${tone}1f`} stroke={`${tone}66`} />
+            {tone === GOOD
+              ? <path d="M5.2 9.3l2.5 2.5 5-5.4" stroke={tone} strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+              : <path d="M9 5v4.4l2.6 1.6" stroke={tone} strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />}
+          </svg>
+          <span style={{ fontSize: "0.86rem", color: MUT }}>{t}</span>
+        </div>
+      ))}
+    </div>
+  );
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "14px" }}>
+      {col("What it stores, and refuses", GOOD, "live", live)}
+      {col("What is still open", WARN, "open", open)}
+    </div>
+  );
+}
+
+// ─── How the work moved between systems ──────────────────────────────────────
+
+function ToolFlow() {
+  const steps = [
+    { n: "Granola", r: "Requirements", c: "#a3e635" },
+    { n: "Linear", r: "Tickets", c: "#818cf8" },
+    { n: "Docs & Sheets", r: "Brief, scorecard", c: "#38bdf8" },
+    { n: "Claude Code", r: "Build", c: "#fb923c" },
+    { n: "Metabase", r: "Data feed", c: "#22d3ee" },
+    { n: "Railway", r: "Runs here", c: "#f472b6" },
+  ];
+  return (
+    <div style={{ ...panel, display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: "6px" }}>
+      {steps.map((s, i) => (
+        <React.Fragment key={s.n}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px", width: "118px", padding: "8px 0" }}>
+            <span style={{ width: "46px", height: "46px", borderRadius: "13px", background: `${s.c}18`, border: `1px solid ${s.c}55`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.05rem", fontWeight: 900, color: s.c }}>{s.n[0]}</span>
+            <span style={{ fontSize: "0.82rem", fontWeight: 700, color: INK }}>{s.n}</span>
+            <span style={{ fontSize: "0.68rem", color: SUB }}>{s.r}</span>
+          </div>
+          {i < steps.length - 1 && <span style={{ color: SUB, fontSize: "0.9rem" }}>→</span>}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
+function BigStat({ v, l }: { v: string; l: string }) {
+  return (
+    <div style={{ ...panel, textAlign: "center", padding: "26px 18px" }}>
+      <div className="gradient-number" style={{ fontSize: "2.1rem", fontWeight: 900, letterSpacing: "-0.03em", lineHeight: 1.1 }}>{v}</div>
+      <div style={{ fontSize: "0.78rem", color: MUT, marginTop: "8px", lineHeight: 1.45 }}>{l}</div>
     </div>
   );
 }
@@ -553,9 +893,10 @@ function SectionNav() {
 
 export default function Home() {
   const wrap: React.CSSProperties = { maxWidth: "1100px", margin: "0 auto", padding: "0 24px" };
-  const sec: React.CSSProperties = { padding: "88px 0" };
+  const sec: React.CSSProperties = { padding: "80px 0" };
   const secAlt: React.CSSProperties = { ...sec, background: "rgba(12,12,20,0.5)" };
   const grid = (min: number): React.CSSProperties => ({ display: "grid", gridTemplateColumns: `repeat(auto-fit, minmax(${min}px, 1fr))`, gap: "14px" });
+  const gap: React.CSSProperties = { marginTop: "30px" };
 
   return (
     <div style={{ background: "var(--background)", minHeight: "100vh" }}>
@@ -595,7 +936,7 @@ export default function Home() {
       <main>
 
         {/* ── Hero ──────────────────────────────────────────────────────── */}
-        <section className="hero-section" style={{ padding: "110px 0 90px" }}>
+        <section className="hero-section" style={{ padding: "100px 0 70px" }}>
           <div style={wrap}>
             <div style={{
               display: "inline-flex", alignItems: "center", gap: "8px", marginBottom: "24px",
@@ -617,12 +958,10 @@ export default function Home() {
 
             <p style={{
               fontSize: "clamp(1rem, 2vw, 1.18rem)", color: "var(--foreground-muted)",
-              lineHeight: 1.75, maxWidth: "680px", marginBottom: "52px",
+              lineHeight: 1.7, maxWidth: "640px", marginBottom: "44px",
             }}>
-              I replaced the call quality review section of the company&apos;s core system with a standalone
-              platform. Phase one was an exact copy, proven by re-scoring every historical review to the same
-              result. Phase two rebuilt it around how the quality analysts work: a prioritised queue, keyboard
-              scoring, challenges, calibration and reporting.
+              I replaced the call quality review tool inside the company&apos;s core system. First an exact
+              copy, proven on every historical review. Then a product built around the analysts&apos; day.
             </p>
 
             {/* Stat pills */}
@@ -648,48 +987,14 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Business outcomes */}
-            <div style={{ marginTop: "44px", paddingTop: "32px", borderTop: "1px solid var(--border-subtle)", maxWidth: "720px" }}>
-              <div style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--foreground-subtle)", marginBottom: "18px" }}>
-                What changed
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-                {[
-                  "Scorecards, weights and critical-fail rules became configuration in the tool, not a release in the core system",
-                  "Short calls and non-sales calls, which the old process never monitored, now enter the review queue",
-                  "The heat map and the weekly and monthly manager reports, previously assembled by hand from a spreadsheet, are computed from every scorecard answer",
-                ].map((outcome) => (
-                  <div key={outcome} style={{ display: "flex", gap: "14px", alignItems: "flex-start" }}>
-                    <div style={{
-                      width: "22px", height: "22px", borderRadius: "50%", flexShrink: 0, marginTop: "1px",
-                      background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.28)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>
-                      <span style={{ color: "#34d399", fontSize: "0.65rem", fontWeight: 700 }}>✓</span>
-                    </div>
-                    <p style={{ fontSize: "0.92rem", color: "var(--foreground-muted)", lineHeight: 1.65 }}>{outcome}</p>
-                  </div>
-                ))}
-              </div>
-              <p style={{ fontSize: "0.8rem", color: "var(--foreground-subtle)", lineHeight: 1.6, marginTop: "18px" }}>
-                Status, November 2026: running in parallel with the system it replaces. Cut-over has not happened yet.
-              </p>
+            {/* Role, status, CTA */}
+            <div style={{ marginTop: "30px", display: "flex", flexWrap: "wrap", gap: "8px" }}>
+              <Chip tone="#bef264">Product Manager and sole builder</Chip>
+              <Chip tone="#bef264">Claude Code as the engineering pair</Chip>
+              <Chip tone="#fbbf24">Status: running in parallel, not yet cut over</Chip>
             </div>
 
-            {/* Role & scope */}
-            <div style={{ marginTop: "30px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "14px", maxWidth: "720px" }}>
-              <div style={{ background: "var(--surface)", border: "1px solid var(--border-subtle)", borderRadius: "12px", padding: "16px 18px" }}>
-                <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--accent)", marginBottom: "8px" }}>My role</div>
-                <p style={{ fontSize: "0.83rem", color: "var(--foreground-muted)", lineHeight: 1.6 }}>Product Manager and sole builder: scope, scoring specification, data model, interface and delivery, with Claude Code as the engineering pair. I approved every deploy.</p>
-              </div>
-              <div style={{ background: "var(--surface)", border: "1px solid var(--border-subtle)", borderRadius: "12px", padding: "16px 18px" }}>
-                <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--accent)", marginBottom: "8px" }}>Partnered with</div>
-                <p style={{ fontSize: "0.83rem", color: "var(--foreground-muted)", lineHeight: 1.6 }}>The quality assurance lead and analysts · call operations management · the data security owner, who holds sign-off before wider rollout.</p>
-              </div>
-            </div>
-
-            {/* Contact / CTA */}
-            <div style={{ marginTop: "28px", display: "flex", flexWrap: "wrap", gap: "12px", alignItems: "center" }}>
+            <div style={{ marginTop: "26px", display: "flex", flexWrap: "wrap", gap: "12px", alignItems: "center" }}>
               <a href="#scoring" style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "linear-gradient(135deg, #65a30d, #a3e635)", color: "#0f1a02", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", borderRadius: "9px", padding: "10px 18px", boxShadow: "0 0 18px rgba(132,204,22,0.35)" }}>
                 Score a call
               </a>
@@ -715,33 +1020,11 @@ export default function Home() {
         {/* ── Problem ───────────────────────────────────────────────────── */}
         <section id="problem" style={secAlt}>
           <div style={wrap}>
-            <ChapterBadge n={1} color="#f43f5e" />
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "48px", alignItems: "start" }}>
-              <div>
-                <Label>The Business Problem</Label>
-                <Heading className="gradient-heading">
-                  A review tool that worked, and could not be changed.
-                </Heading>
-                <Body>
-                  Analysts score sales calls against compliance scorecards. The score decides whether a call
-                  passes and feeds agent pay, so the rules behind it have to be both correct and adjustable.
-                </Body>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                <InfoCard title="Every change was an engineering ticket">
-                  The review section lived inside the core system. Changing a question, a weight or a pass rule
-                  meant a release, and the quality lead had a backlog of changes waiting on engineering time.
-                </InfoCard>
-                <InfoCard title="Critical misses barely moved the score">
-                  The recording notice and data protection check carried 10 points of 100. An agent could miss
-                  it, score 90% and pass. The most serious failure on a call was weighted like any other question.
-                </InfoCard>
-                <InfoCard title="Thin coverage, manual effort">
-                  Short calls and non-sales calls were not monitored at all. Scoring was fully manual at 7 to 8
-                  reviews per analyst per day, with trend reporting typed into a separate spreadsheet.
-                </InfoCard>
-              </div>
-            </div>
+            <div><ChapterBadge n={1} color="#f43f5e" /></div>
+            <Label>The Business Problem</Label>
+            <Heading className="gradient-heading">A review tool that worked, and could not be changed</Heading>
+            <Body>Analysts score sales calls against compliance scorecards, and the score feeds agent pay.</Body>
+            <div style={gap}><ProblemVisuals /></div>
           </div>
         </section>
 
@@ -750,41 +1033,11 @@ export default function Home() {
         {/* ── Parity ────────────────────────────────────────────────────── */}
         <section id="parity" style={sec}>
           <div style={wrap}>
-            <ChapterBadge n={2} color="#f59e0b" />
+            <div><ChapterBadge n={2} color="#f59e0b" /></div>
             <Label>Approach</Label>
             <Heading className="gradient-heading">Copy the old system exactly, then prove it</Heading>
-            <Body>
-              A stricter rule is only credible if the baseline is identical first. Before changing anything I
-              ported the scoring logic line for line, including the rounding behaviour of the original
-              language, and re-scored every review the old system held. Any difference would have been a bug
-              in the copy, found before an agent&apos;s pay depended on it.
-            </Body>
-
-            <div style={{ ...grid(200), marginTop: "36px" }}>
-              <StatTile v="1,281 of 1,281" l="production reviews re-scored to the same score and the same pass or fail" />
-              <StatTile v="0" l="mismatches between the two systems" />
-              <StatTile v="6" l="tables of the old compliance section rebuilt and mirrored" />
-              <StatTile v="62 s" l="for the first full sync on production" />
-            </div>
-
-            <div style={{ ...grid(300), marginTop: "14px" }}>
-              <InfoCard title="What parity had to reproduce">
-                The overall score pools points across sections, it is not an average of section scores. A
-                failed section fails the review without changing the score, so a review can read 95% and
-                still be a fail. Evenly weighted sections split 100 across their questions with the rounding
-                remainder on the last one.
-              </InfoCard>
-              <InfoCard title="Quirks kept on purpose">
-                The old system fails a review when a ticked section is entirely not applicable, and colours
-                scores in bands that do not match the pay bands. Both look like mistakes. I copied them, logged
-                them as decisions for the quality lead, and changed neither until parity was signed off.
-              </InfoCard>
-              <InfoCard title="History the old system did not keep">
-                Each answer is saved with a snapshot of the question as it stood: text, guidance and weight.
-                Editing a scorecard never rewrites an old review, and every edit to a review keeps the previous
-                version.
-              </InfoCard>
-            </div>
+            <Body>A stricter rule is only credible if the baseline is identical first. Each square is one review.</Body>
+            <div style={gap}><ParityMatrix /></div>
           </div>
         </section>
 
@@ -795,24 +1048,12 @@ export default function Home() {
           <div style={wrap}>
             <Label>Architecture</Label>
             <Heading className="gradient-heading">A narrow, read-only feed and nothing else</Heading>
-            <Body>
-              The platform never writes to the core system and never pulls customer personal data. It reads
-              completed calls, products sold, staff and permissions every 15 minutes, and keeps its own
-              reviews in its own database.
-            </Body>
-            <div style={{ marginTop: "36px" }}>
-              <ArchitectureDiagram />
-            </div>
-            <div style={{ ...grid(300), marginTop: "14px" }}>
-              <InfoCard title="Access follows the source of truth">
-                Sign-in is limited to the company Google domain and a role held in the core system. Someone
-                who leaves the company is inactive there, and loses access here on the next sync.
-              </InfoCard>
-              <InfoCard title="A deviation, written down" tone="#fbbf24">
-                The design called for two read-only database views. The build reads through an existing
-                Metabase API key instead. That is recorded as a deviation for the data security owner to
-                accept or reject, not left for them to discover.
-              </InfoCard>
+            <Body>It never writes to the core system and never pulls customer personal data.</Body>
+            <div style={gap}><ArchitectureDiagram /></div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "16px" }}>
+              <Chip tone="#34d399">Leavers lose access on the next sync</Chip>
+              <Chip tone="#34d399">Database has no public address</Chip>
+              <Chip tone="#fbbf24">Deviation logged: reads through an API key, not database views</Chip>
             </div>
           </div>
         </section>
@@ -824,30 +1065,9 @@ export default function Home() {
           <div style={wrap}>
             <Label>Try it</Label>
             <Heading className="gradient-heading">One call, three rulesets</Heading>
-            <Body>
-              The scorecard below is synthetic. The arithmetic is the production logic. The loaded call is the
-              case that started the project: the agent skipped the recording notice. Switch the ruleset and
-              watch what the same answers are worth.
-            </Body>
-            <div style={{ marginTop: "36px" }}>
-              <ScoringDemo />
-            </div>
-            <div style={{ ...grid(300), marginTop: "14px" }}>
-              <InfoCard title="Sizing a rule before proposing it">
-                Before recommending the stricter rule I re-scored three months of historical reviews under
-                it, agent by agent, to show which pay bands would move. The effect was large enough that the
-                rule went to leadership before launch instead of being switched on.
-              </InfoCard>
-              <InfoCard title="The rule that came out of review">
-                The first version zeroed the whole call on any critical miss. After the reviewers&apos; feedback
-                it zeroes only the section the miss sits in, and reserves the whole-call zero for a missold
-                service, which also goes to the agent&apos;s manager.
-              </InfoCard>
-              <InfoCard title="Switched, not deployed">
-                Each ruleset is a setting. The default stays on the original rules so parity holds, and a
-                change takes effect on the first day of a month, never part-way through a pay period.
-              </InfoCard>
-            </div>
+            <Body>Synthetic scorecard, production arithmetic. The loaded call skipped the recording notice.</Body>
+            <div style={gap}><ScoringDemo /></div>
+            <div style={{ marginTop: "14px" }}><RulesetBars /></div>
           </div>
         </section>
 
@@ -856,49 +1076,11 @@ export default function Home() {
         {/* ── Workflow ──────────────────────────────────────────────────── */}
         <section id="workflow" style={secAlt}>
           <div style={wrap}>
-            <ChapterBadge n={3} color="#84cc16" />
+            <div><ChapterBadge n={3} color="#84cc16" /></div>
             <Label>Product</Label>
             <Heading className="gradient-heading">Rebuilt around the analyst&apos;s day</Heading>
-            <Body>
-              The exact copy reproduced the old system, not the job. A session with the quality team showed
-              that their real workflow lived in a spreadsheet beside the tool: who to review next, daily
-              targets, notes on what was missed. The second build moved that work into the product.
-            </Body>
-            <div style={{ ...grid(300), marginTop: "36px" }}>
-              <InfoCard title="A queue that picks the next call">
-                The home page shows progress against 7 reviews a day and 36 a week, and puts the agent
-                furthest under their monthly minimum of 5 reviews first. Agents on a performance plan or
-                with high call volume can carry a higher minimum.
-              </InfoCard>
-              <InfoCard title="Scoring from the keyboard">
-                Y, N or A answers a question and moves on. J and K step down and up. A section can be filled
-                with Yes in one action, the score updates live, and answers are kept in the browser if the
-                tab closes.
-              </InfoCard>
-              <InfoCard title="One analyst per call">
-                Opening a scorecard claims the call for 45 minutes. Other analysts see who has it, it leaves
-                their queue, and taking it over asks first.
-              </InfoCard>
-              <InfoCard title="Skipping is recorded, not silent">
-                A call that cannot be scored leaves the queue with a reason. One of those reasons is a phone
-                system fault, counted on the manager report so it can be raised with the vendor.
-              </InfoCard>
-              <InfoCard title="Challenges with a deadline">
-                An agent or their manager can challenge a score until the 5th of the following month. Scores
-                lock on the 9th. A critical miss opens a follow-up record for the coaching conversation.
-              </InfoCard>
-              <InfoCard title="Calibration">
-                Analysts score the same call blind. The tool compares them side by side and reports agreement
-                per analyst and per question, so drift between reviewers is measured, not assumed.
-              </InfoCard>
-            </div>
-
-            <div style={{ marginTop: "44px" }}>
-              <div style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--foreground-subtle)", marginBottom: "14px" }}>
-                Four weeks, in order
-              </div>
-              <Timeline />
-            </div>
+            <Body>The copy reproduced the old system, not the job. The real workflow lived in a spreadsheet beside it.</Body>
+            <div style={gap}><HomeMock /></div>
           </div>
         </section>
 
@@ -909,23 +1091,14 @@ export default function Home() {
           <div style={wrap}>
             <Label>Reporting</Label>
             <Heading className="gradient-heading">Computed from answers, not typed into a sheet</Heading>
-            <Body>
-              The team&apos;s heat map was built by hand from free-text comments. The platform derives the same
-              views from every scorecard answer and refreshes them with each sync: trends by day, week or
-              month, the ten most-missed criteria, and which agents miss which criteria.
-            </Body>
-            <div style={{ marginTop: "36px" }}>
-              <HeatMap />
-            </div>
-            <div style={{ ...grid(300), marginTop: "14px" }}>
-              <InfoCard title="Validated against the source">
-                I checked the insights against a direct query on a full quarter of 672 reviews. Review count,
-                average score and pass rate matched before anyone was shown the page.
-              </InfoCard>
-              <InfoCard title="The manager report writes itself">
-                The weekly and monthly reports that were compiled by hand are generated from the same data,
-                with a written summary of what slipped and what improved since the previous period.
-              </InfoCard>
+            <Body>The team&apos;s heat map was built by hand. Now it refreshes with every sync.</Body>
+            <div style={gap}><HeatMap /></div>
+            <div style={{ ...grid(320), marginTop: "14px" }}>
+              <MissedBars />
+              <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                <BigStat v="672" l="reviews in the quarter used to check the insights against a direct query. Counts, average and pass rate matched." />
+                <BigStat v="2" l="manager reports, weekly and monthly, generated instead of compiled by hand." />
+              </div>
             </div>
           </div>
         </section>
@@ -935,31 +1108,10 @@ export default function Home() {
         {/* ── Safety ────────────────────────────────────────────────────── */}
         <section id="safety" style={secAlt}>
           <div style={wrap}>
-            <ChapterBadge n={4} color="#38bdf8" />
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "40px" }}>
-              <div>
-                <Label>Controls</Label>
-                <Heading className="gradient-heading">What it stores, and what it refuses</Heading>
-                <div style={{ marginTop: "20px" }}>
-                  <StateRow state="live">No customer personal data is pulled or stored. Where a customer name must be shown, it is read live from the core system, held in memory for 10 minutes and never written to the database. That display sits behind a switch pending privacy review.</StateRow>
-                  <StateRow state="live">Review notes reject emails, phone numbers and postcodes when saved.</StateRow>
-                  <StateRow state="live">Agents see only their own scores and rank. Scoping is enforced on the server, not in the interface.</StateRow>
-                  <StateRow state="live">An audit trail records who opened which agent, review or record, and is kept for 400 days. Five named people can read it.</StateRow>
-                  <StateRow state="live">Security headers, a content policy that runs only the tool&apos;s own scripts, per-address rate limits, and session revocation that takes effect within about 30 seconds.</StateRow>
-                </div>
-              </div>
-              <div>
-                <Label>Limitations</Label>
-                <Heading className="gradient-heading">What is still open</Heading>
-                <div style={{ marginTop: "20px" }}>
-                  <StateRow state="open">It has not replaced the old system. Both run in parallel until the quality lead and the data security owner sign off.</StateRow>
-                  <StateRow state="open">The audit log is not yet locked against the database owner.</StateRow>
-                  <StateRow state="open">Backups are a hosting setting that had not been configured and verified at the time of writing.</StateRow>
-                  <StateRow state="open">Scoring by a language model is deliberately not built. The plan is to run it beside human reviewers and adopt it only above 95% agreement.</StateRow>
-                  <StateRow state="open">I have no measured time saved per review yet. That needs a full month of scoring in the new tool.</StateRow>
-                </div>
-              </div>
-            </div>
+            <div><ChapterBadge n={4} color="#38bdf8" /></div>
+            <Label>Controls and limitations</Label>
+            <Heading className="gradient-heading">What is live, and what I would not claim yet</Heading>
+            <div style={gap}><StatusBoard /></div>
           </div>
         </section>
 
@@ -969,18 +1121,15 @@ export default function Home() {
         <section id="delivery" style={sec}>
           <div style={wrap}>
             <Label>Delivery</Label>
-            <Heading className="gradient-heading">One person, an AI pair and the systems the work already lived in</Heading>
-            <Body>
-              I built this with Claude Code as the engineering pair. Requirements came from meeting notes,
-              work was tracked in Linear, the brief and the scorecard lived in Google Docs and Sheets, the
-              data arrives through Metabase and the service runs on Railway. I made the scope and data
-              decisions, and nothing was deployed without my approval.
-            </Body>
-            <div style={{ ...grid(200), marginTop: "36px" }}>
-              <StatTile v="34" l="deployments in the 17 days from first release to mid November" />
-              <StatTile v="21" l="unit tests" />
-              <StatTile v="48" l="end-to-end checks run against an in-process Postgres" />
-              <StatTile v="1" l="parity test that re-scores the full review history on demand" />
+            <Heading className="gradient-heading">One person, an AI pair, six systems</Heading>
+            <Body>I made the scope and data decisions. Nothing was deployed without my approval.</Body>
+            <div style={gap}><ToolFlow /></div>
+            <div style={{ marginTop: "14px" }}><DeployChart /></div>
+            <div style={{ ...grid(180), marginTop: "14px" }}>
+              <BigStat v="34" l="deployments in 17 days" />
+              <BigStat v="21" l="unit tests" />
+              <BigStat v="48" l="end-to-end checks" />
+              <BigStat v="1" l="parity test over the full history" />
             </div>
           </div>
         </section>
@@ -992,72 +1141,21 @@ export default function Home() {
           <div style={wrap}>
             <Label>Outcomes &amp; Implication</Label>
             <Heading className="gradient-heading">A compliance process the quality team can change themselves</Heading>
-            <Body>
-              The result so far is equivalence and reach, not yet speed. Here is what is established, and
-              what it sets up.
-            </Body>
-
-            <div style={{ marginTop: "40px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "14px" }}>
-              {[
-                {
-                  category: "Proven equivalence",
-                  color: "#84cc16",
-                  outcomes: [
-                    "1,281 of 1,281 production reviews re-score to the same score and result, with 0 mismatches",
-                    "Every sync logs how many reviews changed and how many conflict with the old system's copy",
-                  ],
-                },
-                {
-                  category: "Wider coverage",
-                  color: "#10b981",
-                  outcomes: [
-                    "Short and non-sales calls enter the queue as their own call type, excluded from pay by default",
-                    "A second sales team was added as a separate track, so its numbers never mix with the first team's scores or pay",
-                  ],
-                },
-                {
-                  category: "Reporting without the spreadsheet",
-                  color: "#f59e0b",
-                  outcomes: [
-                    "Heat map, trends and most-missed criteria computed from scorecard answers on every sync",
-                    "Weekly and monthly manager reports generated, not compiled by hand",
-                  ],
-                },
-                {
-                  category: "Change without a release",
-                  color: "#38bdf8",
-                  outcomes: [
-                    "Three scoring rulesets behind one setting, switchable at the start of a month",
-                    "Scorecards, minimums, targets and analyst assignments edited in the tool by the quality team",
-                  ],
-                },
-              ].map(({ category, color, outcomes }) => (
-                <div key={category} className="card-hover" style={{ background: "var(--surface)", border: "1px solid var(--border-subtle)", borderRadius: "16px", padding: "24px" }}>
-                  <div style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color, marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: color, boxShadow: `0 0 6px ${color}80` }} />
-                    {category}
-                  </div>
-                  {outcomes.map((o) => (
-                    <div key={o} style={{ display: "flex", gap: "10px", marginBottom: "12px", alignItems: "flex-start" }}>
-                      <div style={{ width: "18px", height: "18px", borderRadius: "50%", flexShrink: 0, marginTop: "1px", background: `${color}10`, border: `1px solid ${color}28`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <span style={{ color, fontSize: "0.6rem", fontWeight: 700 }}>✓</span>
-                      </div>
-                      <p style={{ fontSize: "0.82rem", color: "var(--foreground-muted)", lineHeight: 1.65 }}>{o}</p>
-                    </div>
-                  ))}
-                </div>
-              ))}
+            <Body>The result so far is equivalence and reach, not yet speed.</Body>
+            <div style={{ ...grid(220), marginTop: "30px" }}>
+              <BigStat v="1,281 / 1,281" l="reviews identical in both systems" />
+              <BigStat v="3" l="scoring rulesets behind one switch" />
+              <BigStat v="2" l="call types newly in the queue: short and non-sales" />
+              <BigStat v="2" l="sales tracks, with scores and pay kept apart" />
             </div>
 
-            <div style={{ marginTop: "28px", background: "rgba(132,204,22,0.06)", border: "1px solid rgba(132,204,22,0.2)", borderRadius: "14px", padding: "24px 28px" }}>
-              <div style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--accent)", marginBottom: "10px" }}>
+            <div style={{ marginTop: "14px", background: "rgba(132,204,22,0.06)", border: "1px solid rgba(132,204,22,0.2)", borderRadius: "14px", padding: "22px 26px" }}>
+              <div style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--accent)", marginBottom: "8px" }}>
                 The connective thread
               </div>
-              <p style={{ fontSize: "0.92rem", color: "var(--foreground-muted)", lineHeight: 1.8, maxWidth: "800px" }}>
-                Each later step depended on the first one. Proving the copy identical is what made a stricter
-                rule a measurable change and not an argument. Measuring that change on real history is what
-                sent it to leadership before it touched anyone&apos;s pay. The same order applies to the next step:
-                a model will score calls beside the human reviewers, and replaces them only when the two agree.
+              <p style={{ fontSize: "0.95rem", color: "var(--foreground-muted)", lineHeight: 1.7, maxWidth: "760px", margin: 0 }}>
+                Proving the copy identical turned a stricter rule into a measurable change. Measuring it on
+                real history sent it to leadership before it touched anyone&apos;s pay.
               </p>
             </div>
           </div>
@@ -1109,7 +1207,7 @@ export default function Home() {
           </div>
 
           <div style={{ fontSize: "0.7rem", color: "var(--foreground-subtle)", lineHeight: 1.6, maxWidth: "640px" }}>
-            Written case study: all architecture, processes and methods described from first-hand work at Just Move In. The scorecard and heat map on this page are synthetic. No customer data, agent records, supplier names or confidential figures are reproduced.
+            Written case study: all architecture, processes and methods described from first-hand work at Just Move In. The scorecard, analyst home, heat map and most-missed chart on this page are synthetic. No customer data, agent records, supplier names or confidential figures are reproduced.
           </div>
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
