@@ -1046,25 +1046,25 @@ export default function Home() {
             }}>
               <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#34d399", boxShadow: "0 0 6px #34d399" }} />
               <span style={{ fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.14em", color: "#bef264" }}>
-                Case Study · Just Move In
+                Case Study · Just Move In · QA Compliance Platform
               </span>
             </div>
 
             <h1 className="gradient-heading" style={{
-              fontSize: "clamp(2.2rem, 5.5vw, 4rem)", fontWeight: 900,
-              letterSpacing: "-0.04em", lineHeight: 1.08, marginBottom: "22px", maxWidth: "860px",
+              fontSize: "clamp(2rem, 4.6vw, 3.3rem)", fontWeight: 900,
+              letterSpacing: "-0.04em", lineHeight: 1.08, marginBottom: "22px", maxWidth: "920px",
             }}>
-              QA Compliance Platform
+              Self-Serve Call Quality Compliance, Proven on Every Past Review
             </h1>
 
             <p style={{
               fontSize: "clamp(1rem, 2vw, 1.18rem)", color: "var(--foreground-muted)",
               lineHeight: 1.7, maxWidth: "720px", marginBottom: "44px",
             }}>
-              Call quality scores determine whether a sale passes compliance and feed directly into agent
-              pay, yet every change to the scoring rules waited on an engineering release. I rebuilt the
-              review tool as a standalone platform: first as an exact replica, verified against all 1,281
-              historical reviews, then redesigned around how quality analysts actually work.
+              A platform that gives the quality team control of its own compliance rules, with no
+              engineering release in the way. I built it in four weeks: an exact replica that reproduced
+              all 1,281 historical reviews, then a keyboard-first workflow shaped around the analysts,
+              wider call coverage and reporting that writes itself.
             </p>
 
             {/* Stat pills */}
