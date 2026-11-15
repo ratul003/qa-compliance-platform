@@ -1059,16 +1059,18 @@ export default function Home() {
 
             <p style={{
               fontSize: "clamp(1rem, 2vw, 1.18rem)", color: "var(--foreground-muted)",
-              lineHeight: 1.7, maxWidth: "640px", marginBottom: "44px",
+              lineHeight: 1.7, maxWidth: "720px", marginBottom: "44px",
             }}>
-              I replaced the call quality review tool inside the company&apos;s core system. First an exact
-              copy, proven on every historical review. Then a product built around the analysts&apos; day.
+              Call quality scores determine whether a sale passes compliance and feed directly into agent
+              pay, yet every change to the scoring rules waited on an engineering release. I rebuilt the
+              review tool as a standalone platform: first as an exact replica, verified against all 1,281
+              historical reviews, then redesigned around how quality analysts actually work.
             </p>
 
             {/* Stat pills */}
             <div style={{ display: "flex", flexWrap: "wrap", gap: "14px" }}>
               {[
-                { value: "1,281 / 1,281", label: "Reviews Re-scored Identically" },
+                { value: "1,281 / 1,281", label: "Reviews Reproduced Exactly" },
                 { value: "15", label: "Scorecards Mirrored" },
                 { value: "240+", label: "Questions" },
                 { value: "15 min", label: "Read-only Sync" },
