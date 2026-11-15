@@ -839,7 +839,7 @@ function VideoTour() {
           <video ref={ref} controls preload="metadata" playsInline poster="/walkthrough-poster.jpg"
             onTimeUpdate={(e) => setNow(e.currentTarget.currentTime)}
             style={{ display: "block", width: "100%", aspectRatio: "1280 / 800" }}
-            aria-label="Six-minute narrated walkthrough of the Self-Serve Call Quality Compliance Platform">
+            aria-label="Six-minute narrated walkthrough of the QA Compliance Platform">
             <source src="/walkthrough.mp4" type="video/mp4" />
           </video>
         </div>
@@ -1024,7 +1024,7 @@ export default function Home() {
               </svg>
             </div>
             <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "var(--foreground)", letterSpacing: "-0.01em" }}>
-              Self-Serve Call Quality Compliance Platform
+              QA Compliance Platform
             </span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "2px" }}>
@@ -1054,7 +1054,7 @@ export default function Home() {
               fontSize: "clamp(2rem, 4.6vw, 3.3rem)", fontWeight: 900,
               letterSpacing: "-0.04em", lineHeight: 1.08, marginBottom: "22px", maxWidth: "920px",
             }}>
-              Self-Serve Call Quality Compliance Platform
+              QA Compliance Platform
             </h1>
 
             <p style={{

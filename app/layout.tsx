@@ -11,18 +11,18 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://qa-compliance-platform.vercel.app"),
-  title: "Self-Serve Call Quality Compliance Platform | Wahid Tawsif Ratul",
+  title: "QA Compliance Platform | Wahid Tawsif Ratul",
   description:
     "Case study: a standalone call quality compliance platform that gives the quality team control of its own rules, built as an exact replica of the old tool and then redesigned around the analysts' working day.",
   openGraph: {
-    title: "Self-Serve Call Quality Compliance Platform",
+    title: "QA Compliance Platform",
     description:
       "Gives the quality team control of its own compliance rules, with no engineering release in the way.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Self-Serve Call Quality Compliance Platform",
+    title: "QA Compliance Platform",
     description:
       "Gives the quality team control of its own compliance rules, with no engineering release in the way.",
   },
