@@ -814,14 +814,10 @@ function ToolFlow() {
 // ─── Walkthrough video with chapters ─────────────────────────────────────────
 
 const TOUR: { g: string; items: [string, number][] }[] = [
-  { g: "Getting started", items: [["Welcome", 0]] },
-  { g: "Finding calls", items: [["Home", 32], ["Score calls", 50], ["Short and non-sales calls", 66], ["Skipping a call", 79]] },
-  { g: "Scoring", items: [["Scoring a call", 89], ["Notes, tags and next steps", 107]] },
-  { g: "After a review", items: [["Reviews", 124], ["A review and its export", 136], ["Challenges", 147], ["Follow-ups", 161]] },
-  { g: "Insights", items: [["What changed", 178], ["Trends and most missed", 193], ["Heat map", 206], ["Habits and coaching gaps", 217], ["Agents and reviewers", 226]] },
-  { g: "Reports", items: [["Manager report", 238], ["Agent pages and ranking", 256]] },
-  { g: "Settings and coaching", items: [["QA team", 274], ["Targets, weighting and split", 286], ["Calibration", 306], ["Scorecards", 321], ["Logins and audit", 342]] },
-  { g: "Help", items: [["Feedback and the pay feed", 356]] },
+  { g: "Opening", items: [["Why it exists", 0]] },
+  { g: "The story", items: [["The problem", 30], ["Parity first", 56], ["One call, three rulesets", 101]] },
+  { g: "The product", items: [["The analyst's day", 141], ["After the review", 188], ["Insights", 217]] },
+  { g: "Limits and delivery", items: [["Safety and limits", 257], ["How it was built", 285], ["Where it stands", 317]] },
 ];
 const TOUR_FLAT = TOUR.flatMap((x) => x.items);
 const mmss = (t: number) => `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
@@ -838,7 +834,7 @@ function VideoTour() {
         <div style={{ flex: "3 1 520px", minWidth: 0, background: "#000", display: "flex", alignItems: "center" }}>
           <video ref={ref} controls preload="metadata" playsInline poster="/walkthrough-poster.jpg"
             onTimeUpdate={(e) => setNow(e.currentTarget.currentTime)}
-            style={{ display: "block", width: "100%", aspectRatio: "1280 / 800" }}
+            style={{ display: "block", width: "100%", aspectRatio: "16 / 9" }}
             aria-label="Six-minute narrated walkthrough of the QA Compliance Platform">
             <source src="/walkthrough.mp4" type="video/mp4" />
           </video>
@@ -1129,7 +1125,7 @@ export default function Home() {
           <div style={wrap}>
             <Label>Watch it run</Label>
             <Heading className="gradient-heading">The whole product in six minutes</Heading>
-            <Body>The narrated guide that ships inside the tool, recorded on demo data. Pick a chapter to jump to it.</Body>
+            <Body>A narrated walkthrough: the problem, the parity proof, the scoring engine, then the product itself on demo data. Pick a chapter to jump to it. The click-by-click guide that ships inside the tool is <a href="/tool-guide.mp4" style={{ color: A, textDecoration: "underline" }}>here</a>.</Body>
             <div style={gap}><VideoTour /></div>
           </div>
         </section>
