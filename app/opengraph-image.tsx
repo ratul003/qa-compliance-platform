@@ -63,7 +63,7 @@ export default function Image() {
                 background: "#34d399",
               }}
             />
-            Case Study · UK PropTech
+            Case Study · B2B2C Service Platform
           </div>
         </div>
 
