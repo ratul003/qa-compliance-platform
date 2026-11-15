@@ -1042,7 +1042,7 @@ export default function Home() {
             }}>
               <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#34d399", boxShadow: "0 0 6px #34d399" }} />
               <span style={{ fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.14em", color: "#bef264" }}>
-                Case Study · Just Move In
+                Case Study · UK PropTech
               </span>
             </div>
 
@@ -1322,7 +1322,7 @@ export default function Home() {
           </div>
 
           <div style={{ fontSize: "0.7rem", color: "var(--foreground-subtle)", lineHeight: 1.6, maxWidth: "640px" }}>
-            Written case study: all architecture, processes and methods described from first-hand work at Just Move In. The walkthrough video shows the product running on demo data, with scorecard names as they appear in the tool. The scorecard, analyst home, heat map and most-missed chart on this page are synthetic. No customer data or real agent records are reproduced.
+            Written case study: all architecture, processes and methods described from first-hand work at a UK PropTech startup. The walkthrough video shows the product running on demo data, with scorecard names as they appear in the tool. The scorecard, analyst home, heat map and most-missed chart on this page are synthetic. No customer data or real agent records are reproduced.
           </div>
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>

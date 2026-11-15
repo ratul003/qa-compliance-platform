@@ -63,7 +63,7 @@ export default function Image() {
                 background: "#34d399",
               }}
             />
-            Case Study · Just Move In
+            Case Study · UK PropTech
           </div>
         </div>
 
