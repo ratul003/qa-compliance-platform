@@ -1104,6 +1104,9 @@ export default function Home() {
               <a href="#scoring" style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "transparent", color: "var(--foreground-muted)", fontSize: "0.85rem", fontWeight: 600, textDecoration: "none", border: "1px solid var(--border)", borderRadius: "9px", padding: "10px 18px" }}>
                 Score a call
               </a>
+              <a href="https://wahid-ratul.vercel.app/writing/the-power-of-mcp" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "transparent", color: "var(--foreground-muted)", fontSize: "0.85rem", fontWeight: 600, textDecoration: "none", border: "1px solid var(--border)", borderRadius: "9px", padding: "10px 18px" }}>
+                Read the story behind it
+              </a>
               <a href="mailto:wahidtratul@gmail.com" style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "transparent", color: "var(--foreground-muted)", fontSize: "0.85rem", fontWeight: 600, textDecoration: "none", border: "1px solid var(--border)", borderRadius: "9px", padding: "10px 18px" }}>
                 Email me
               </a>
