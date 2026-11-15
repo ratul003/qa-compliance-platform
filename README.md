@@ -1,4 +1,4 @@
-# QA Compliance Platform
+# Self-Serve Call Quality Compliance Platform
 
 Case-study site for the call quality compliance platform I built at Just Move In: an exact copy of the old
 review tool, proven by re-scoring 1,281 of 1,281 historical reviews to the same result, then rebuilt around

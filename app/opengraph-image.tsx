@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "QA Compliance Platform | Wahid Tawsif Ratul";
+export const alt = "Self-Serve Call Quality Compliance Platform | Wahid Tawsif Ratul";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -71,7 +71,7 @@ export default function Image() {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div
             style={{
-              fontSize: "82px",
+              fontSize: "62px",
               fontWeight: 900,
               letterSpacing: "-3px",
               lineHeight: 1.02,
@@ -79,7 +79,7 @@ export default function Image() {
               maxWidth: "960px",
             }}
           >
-            QA Compliance Platform
+            Self-Serve Call Quality Compliance Platform
           </div>
           <div
             style={{
@@ -90,8 +90,8 @@ export default function Image() {
               maxWidth: "880px",
             }}
           >
-            An exact copy first, proven on 1,281 of 1,281 reviews. Then a call quality
-            platform built around the analysts&apos; day.
+            Gives the quality team control of its own compliance rules, with no
+            engineering release in the way.
           </div>
         </div>
 

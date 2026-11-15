@@ -839,7 +839,7 @@ function VideoTour() {
           <video ref={ref} controls preload="metadata" playsInline poster="/walkthrough-poster.jpg"
             onTimeUpdate={(e) => setNow(e.currentTarget.currentTime)}
             style={{ display: "block", width: "100%", aspectRatio: "1280 / 800" }}
-            aria-label="Six-minute narrated walkthrough of the QA Compliance Platform">
+            aria-label="Six-minute narrated walkthrough of the Self-Serve Call Quality Compliance Platform">
             <source src="/walkthrough.mp4" type="video/mp4" />
           </video>
         </div>
@@ -1024,7 +1024,7 @@ export default function Home() {
               </svg>
             </div>
             <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "var(--foreground)", letterSpacing: "-0.01em" }}>
-              QA Compliance Platform
+              Self-Serve Call Quality Compliance Platform
             </span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "2px" }}>
@@ -1046,7 +1046,7 @@ export default function Home() {
             }}>
               <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#34d399", boxShadow: "0 0 6px #34d399" }} />
               <span style={{ fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.14em", color: "#bef264" }}>
-                Case Study · Just Move In · QA Compliance Platform
+                Case Study · Just Move In
               </span>
             </div>
 
@@ -1054,7 +1054,7 @@ export default function Home() {
               fontSize: "clamp(2rem, 4.6vw, 3.3rem)", fontWeight: 900,
               letterSpacing: "-0.04em", lineHeight: 1.08, marginBottom: "22px", maxWidth: "920px",
             }}>
-              Self-Serve Call Quality Compliance, Proven on Every Past Review
+              Self-Serve Call Quality Compliance Platform
             </h1>
 
             <p style={{
