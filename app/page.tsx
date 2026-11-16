@@ -1125,7 +1125,7 @@ export default function Home() {
           <div style={wrap}>
             <Label>Watch it run</Label>
             <Heading className="gradient-heading">The whole product in six minutes</Heading>
-            <Body>A narrated walkthrough: the problem, the parity proof, the scoring engine, then the product itself on demo data. Pick a chapter to jump to it. The click-by-click guide that ships inside the tool is <a href="/tool-guide.mp4" style={{ color: A, textDecoration: "underline" }}>here</a>.</Body>
+            <Body>A narrated walkthrough: the problem, the parity proof, the scoring engine, then the product itself on demo data. Pick a chapter to jump to it.</Body>
             <div style={gap}><VideoTour /></div>
           </div>
         </section>
