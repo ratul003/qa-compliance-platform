@@ -1230,7 +1230,7 @@ export default function Home() {
           <div style={wrap}>
             <div><ChapterBadge n={4} color="#38bdf8" /></div>
             <Label>Controls and limitations</Label>
-            <Heading className="gradient-heading">What is live, and what I would not claim yet</Heading>
+            <Heading className="gradient-heading">What is live, and what comes next</Heading>
             <div style={gap}><StatusBoard /></div>
           </div>
         </section>
@@ -1261,7 +1261,7 @@ export default function Home() {
           <div style={wrap}>
             <Label>Outcomes &amp; Implication</Label>
             <Heading className="gradient-heading">A compliance process the quality team can change themselves</Heading>
-            <Body>The result so far is equivalence and reach, not yet speed.</Body>
+            <Body>Released in 13 days, proven identical on all 1,281 reviews, and extended to two call types that were never reviewed before.</Body>
             <div style={{ ...grid(220), marginTop: "30px" }}>
               <BigStat v="1,281 / 1,281" l="reviews identical in both systems" />
               <BigStat v="3" l="scoring rulesets behind one switch" />
