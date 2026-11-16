@@ -817,7 +817,7 @@ const TOUR: { g: string; items: [string, number][] }[] = [
   { g: "Opening", items: [["Why it exists", 0]] },
   { g: "The story", items: [["The problem", 30], ["Parity first", 56], ["One call, three rulesets", 101]] },
   { g: "The product", items: [["The analyst's day", 141], ["After the review", 188], ["Insights", 217]] },
-  { g: "Limits and delivery", items: [["Safety and limits", 257], ["How it was built", 285], ["Where it stands", 317]] },
+  { g: "Limits and delivery", items: [["Safety and limits", 257], ["How it was built", 286], ["Where it stands", 317]] },
 ];
 const TOUR_FLAT = TOUR.flatMap((x) => x.items);
 const mmss = (t: number) => `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
