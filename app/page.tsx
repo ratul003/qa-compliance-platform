@@ -1095,7 +1095,7 @@ export default function Home() {
             <div style={{ marginTop: "30px", display: "flex", flexWrap: "wrap", gap: "8px" }}>
               <Chip tone="#bef264">Product Manager and sole builder</Chip>
               <Chip tone="#bef264">Claude Code as the engineering pair</Chip>
-              <Chip tone="#fbbf24">Status: running in parallel, not yet cut over</Chip>
+              <Chip tone="#34d399">Released: phase one live with the quality team, alongside the old system</Chip>
             </div>
 
             <div style={{ marginTop: "26px", display: "flex", flexWrap: "wrap", gap: "12px", alignItems: "center" }}>
