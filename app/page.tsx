@@ -1299,7 +1299,7 @@ export default function Home() {
       </main>
 
       {/* ── Footer ───────────────────────────────────────────────────────── */}
-      <footer style={{ borderTop: "1px solid var(--border-subtle)", marginTop: "32px" }}>
+      <footer style={{ borderTop: "1px solid var(--border-subtle)", marginTop: "32px", position: "relative", zIndex: 45, background: "var(--background)" }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "40px 24px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "24px", flexWrap: "wrap" }}>
             <div>
