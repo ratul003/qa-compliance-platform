@@ -211,3 +211,7 @@ section[id] { scroll-margin-top: 80px; }
     transition-duration: 0.001ms !important;
   }
 }
+
+.icon-link{color:var(--foreground-muted);transition:color .15s;display:inline-flex}
+.icon-link:hover{color:var(--accent)}
+@media(max-width:640px){.hdr-tag,.hdr-hint{display:none}}

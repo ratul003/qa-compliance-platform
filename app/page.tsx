@@ -875,6 +875,20 @@ function BigStat({ v, l }: { v: string; l: string }) {
   );
 }
 
+const MONO = "ui-monospace, 'SF Mono', Menlo, monospace";
+function IconLinks({ size }: { size: number }) {
+  const sv = { width: size, height: size, viewBox: "0 0 24 24", "aria-hidden": true } as const;
+  return (
+    <>
+      <a className="icon-link" href="https://wahid-ratul.vercel.app" target="_blank" rel="noopener" aria-label="Portfolio" title="Portfolio"><svg {...sv} fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg></a>
+      <a className="icon-link" href="https://www.linkedin.com/in/wahidratul112296" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><svg {...sv} fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z" /></svg></a>
+      <a className="icon-link" href="https://github.com/ratul003" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub"><svg {...sv} fill="currentColor"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.69 5.41-5.26 5.69.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.68.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z" /></svg></a>
+      <a className="icon-link" href="https://medium.com/@wahidtratul" target="_blank" rel="noopener" aria-label="Medium" title="Medium"><svg {...sv} fill="currentColor"><path d="M13.54 12a6.8 6.8 0 0 1-6.77 6.82A6.8 6.8 0 0 1 0 12a6.8 6.8 0 0 1 6.77-6.82A6.8 6.8 0 0 1 13.54 12zm7.42 0c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42S20.96 8.46 20.96 12zM24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z" /></svg></a>
+      <a className="icon-link" href="mailto:wahidtratul@gmail.com" aria-label="Email" title="wahidtratul@gmail.com"><svg {...sv} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-10 6L2 7" /></svg></a>
+    </>
+  );
+}
+
 const CHAPTERS = [
   { n: "01", title: "The Problem", sub: "Every change was an engineering ticket", href: "#problem", color: "#f43f5e" },
   { n: "02", title: "Parity First", sub: "Copy it exactly, then prove it", href: "#parity", color: "#f59e0b" },
@@ -1001,34 +1015,25 @@ export default function Home() {
       <SectionNav />
 
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
-      <nav style={{
+      <header style={{
         position: "sticky", top: 0, zIndex: 50,
         borderBottom: "1px solid var(--border-subtle)",
-        background: "rgba(10,10,15,0.85)",
-        backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)",
+        background: "rgba(10,10,15,0.9)",
+        backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
       }}>
-        <div style={{ ...wrap, display: "flex", alignItems: "center", justifyContent: "space-between", height: "58px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <div style={{
-              width: "26px", height: "26px", borderRadius: "6px",
-              background: "linear-gradient(135deg, #65a30d, #a3e635)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              boxShadow: "0 0 12px rgba(132,204,22,0.4)",
-            }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M5 12.5l4.5 4.5L19 7.5" stroke="#0f1a02" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-            <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "var(--foreground)", letterSpacing: "-0.01em" }}>
-              QA Compliance Platform
-            </span>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "2px" }}>
-            <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--foreground)" }}>Wahid Tawsif Ratul</span>
-            <span style={{ fontSize: "0.72rem", color: "var(--accent)" }}>Data Scientist · Product Manager</span>
-          </div>
+        <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", height: "56px", overflowX: "auto" }}>
+          <span style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--foreground)", flexShrink: 0, whiteSpace: "nowrap" }}>
+            QA Compliance <span style={{ color: "var(--accent)" }}>Platform</span>
+            <span className="hdr-tag" style={{ fontWeight: 400, marginLeft: "8px", fontSize: "0.75rem", color: "var(--foreground-muted)" }}>rules without a release</span>
+          </span>
+          <span style={{ flexShrink: 0, display: "flex", alignItems: "center", margin: "0 16px", gap: "14px" }}>
+            <IconLinks size={18} />
+          </span>
+          <span className="hdr-hint" style={{ marginLeft: "auto", flexShrink: 0, fontSize: "0.75rem", fontFamily: MONO, color: "var(--foreground-muted)" }}>
+            scroll the story <span style={{ color: "var(--accent)" }}>↓</span>
+          </span>
         </div>
-      </nav>
+      </header>
 
       <main>
 
@@ -1294,54 +1299,20 @@ export default function Home() {
       </main>
 
       {/* ── Footer ───────────────────────────────────────────────────────── */}
-      <footer style={{ borderTop: "1px solid var(--border-subtle)", padding: "32px 0", background: "var(--surface)" }}>
-        <div style={{ ...wrap, display: "flex", flexDirection: "column", gap: "20px" }}>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", alignItems: "center" }}>
-            <span style={{ fontSize: "0.68rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--foreground-subtle)", marginRight: "6px" }}>
-              Portfolio
-            </span>
-            {[
-              { label: "Claude-ing WorkOS", href: "https://claude-ing.vercel.app", color: "#F5A524" },
-              { label: "Product Intelligence Platform", href: "https://product-intelligence-platform.vercel.app", color: "#6366f1" },
-              { label: "Experimentation Science", href: "https://experimentation-science.vercel.app", color: "#f59e0b" },
-            ].map(({ label, href, color }) => (
-              <a key={label} href={href} target="_blank" rel="noopener noreferrer" style={{
-                fontSize: "0.79rem", fontWeight: 500, color: "var(--foreground-muted)",
-                textDecoration: "none", border: "1px solid var(--border-subtle)",
-                borderRadius: "7px", padding: "5px 12px",
-                display: "inline-flex", alignItems: "center", gap: "6px",
-                transition: "border-color 0.2s, color 0.2s",
-              }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = color; (e.currentTarget as HTMLAnchorElement).style.color = color; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--border-subtle)"; (e.currentTarget as HTMLAnchorElement).style.color = "var(--foreground-muted)"; }}
-              >
-                <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: color, flexShrink: 0 }} />
-                {label}
-              </a>
-            ))}
-          </div>
-
-          <div style={{ fontSize: "0.7rem", color: "var(--foreground-subtle)", lineHeight: 1.6, maxWidth: "640px" }}>
-            Written case study: all architecture, processes and methods described from first-hand work at a B2B2C service platform. The walkthrough video shows the product running on demo data, with scorecard names as they appear in the tool. The scorecard, analyst home, heat map and most-missed chart on this page are synthetic. No customer data or real agent records are reproduced.
-          </div>
-
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <div style={{ width: "22px", height: "22px", borderRadius: "5px", background: "linear-gradient(135deg, #65a30d, #a3e635)", boxShadow: "0 0 8px rgba(132,204,22,0.3)" }} />
-              <span style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--foreground)" }}>Wahid Tawsif Ratul</span>
-                <span style={{ fontSize: "0.72rem", color: "var(--foreground-subtle)" }}>Data Scientist · Product Manager</span>
-              </span>
+      <footer style={{ borderTop: "1px solid var(--border-subtle)", marginTop: "32px" }}>
+        <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "40px 24px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "24px", flexWrap: "wrap" }}>
+            <div>
+              <p style={{ fontSize: "1rem", fontWeight: 600, color: "var(--foreground)", margin: 0 }}>Wahid Tawsif Ratul</p>
+              <p style={{ fontSize: "0.875rem", color: "var(--foreground-muted)", margin: "4px 0 0" }}>© 2026 · Data Scientist · Product Manager</p>
             </div>
-            <a href="https://github.com/ratul003/qa-compliance-platform" target="_blank" rel="noopener noreferrer" style={{
-              display: "inline-flex", alignItems: "center", gap: "8px",
-              fontSize: "0.82rem", fontWeight: 600, color: "var(--foreground-muted)",
-              textDecoration: "none", border: "1px solid var(--border)",
-              borderRadius: "8px", padding: "7px 14px",
-            }}>
-              GitHub
-            </a>
+            <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+              <IconLinks size={20} />
+            </div>
           </div>
+          <p style={{ fontSize: "0.7rem", color: "var(--foreground-subtle)", lineHeight: 1.6, maxWidth: "720px", margin: "28px 0 0" }}>
+            Written case study: all architecture, processes and methods described from first-hand work at a B2B2C service platform. The walkthrough video shows the product running on demo data, with scorecard names as they appear in the tool. The scorecard, analyst home, heat map and most-missed chart on this page are synthetic. No customer data or real agent records are reproduced.
+          </p>
         </div>
       </footer>
     </div>
